@@ -19,10 +19,10 @@ public class DatabaseConfig {
     @Autowired
     public DatabaseConfig(@Value("${datasource.url}") String url,
                           @Value("${datasource.username}") String username,
-                          @Value("${datasource.password} ") int password) {
+                          @Value("${datasource.password}") String password) {
         basicDataSource = new BasicDataSource();
         basicDataSource.setUrl(url);
         basicDataSource.setUsername(username);
-        basicDataSource.setPassword(String.valueOf(password));
+        basicDataSource.setPassword(password);
     }
 }

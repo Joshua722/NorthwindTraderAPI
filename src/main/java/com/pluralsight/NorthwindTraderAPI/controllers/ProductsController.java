@@ -1,8 +1,10 @@
 package com.pluralsight.NorthwindTraderAPI.controllers;
 
+import com.pluralsight.NorthwindTraderAPI.dao.JdbcProductDAO;
 import com.pluralsight.NorthwindTraderAPI.dao.ProductDAO;
 import com.pluralsight.NorthwindTraderAPI.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,17 +18,26 @@ public class ProductsController {
         this.productDAO = productDAO;
     }
 
-    @RequestMapping(path="/products/",
-                    method = RequestMethod.GET)
+    @RequestMapping(path = "/products/",
+            method = RequestMethod.GET)
     public List<Product> getAllProducts() {
-        var products = productDAO.getAll();
-        return products;
+        return productDAO.getAll();
     }
 
-    @RequestMapping(path="/products/{id}",
-                    method = RequestMethod.GET)
+    @RequestMapping(path = "/products/{id}",
+            method = RequestMethod.GET)
     public Product getProductById(@PathVariable int id) {
-        Product product = productDAO.getByID(id);
-        return product;
+        return productDAO.getByID(id);
+    }
+    @RequestMapping(path = "/products/insert",
+            method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public Product insertNew(@RequestBody Product product){
+        return productDAO.insert(product);
+    }
+    @RequestMapping(path = "products/{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteEmployee(@PathVariable int id){
+        productDAO.delete(id);
     }
 }

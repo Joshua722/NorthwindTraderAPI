@@ -40,8 +40,8 @@ public class JdbcProductDAO implements ProductDAO {
     public Product getByID(int id) {
         Product product = null;
 
-        try (Connection conn = dataSource.getConnection()) {
-            PreparedStatement query = conn.prepareStatement("SELECT * FROM Products WHERE ProductID = ?");
+        try (Connection conn = dataSource.getConnection();
+            PreparedStatement query = conn.prepareStatement("SELECT * FROM Products WHERE ProductID = ?")) {
             query.setInt(1, id);
             ResultSet rows = query.executeQuery();
 
@@ -55,5 +55,42 @@ public class JdbcProductDAO implements ProductDAO {
             throw new RuntimeException(e);
         }
         return product;
+    }
+
+    @Override
+    public Product insert(Product product) {
+
+       try(Connection conn = dataSource.getConnection();
+           PreparedStatement query = conn.prepareStatement("INSERT INTO Products (ProductName, UnitPrice) VALUES (?, ?)")){
+           query.setString(1, product.getProductName());
+           query.setDouble(2,product.getUnitPrice());
+           int rows = query.executeUpdate();
+           if (rows > 0) {
+               System.out.println("Product has been added.");
+               return product;
+           } else {
+               System.out.println("Something went wrong, failed to add.");
+           }
+       } catch (SQLException e) {
+           throw new RuntimeException(e);
+       }
+       return product;
+    }
+
+    @Override
+    public void delete(int id) {
+        try(Connection conn = dataSource.getConnection();
+            PreparedStatement deleteEx = conn.prepareStatement("DELETE FROM Products WHERE ProductID = ?")){
+            deleteEx.setInt(1,id);
+            int rowsDeleted = deleteEx.executeUpdate();
+            if (rowsDeleted > 0) {
+                System.out.println("Delete was Successful");
+            }
+            else{
+                System.out.println("Invalid ProductID");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
